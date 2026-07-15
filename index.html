@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Descifrá el mensaje</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#f2e6c9;
+    --gold-light:#fff3b0;
+    --gold-dark:#8a5a1e;
+    --ink:#2a1e0f;
+    --slot-bg:#eadfc2;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;height:100%;
+    font-family:'Poppins',sans-serif;
+    color:var(--ink);
+    background:#3a0505;
+    overflow:hidden;
+  }
+  body{
+    display:flex;align-items:center;justify-content:center;
+    height:100vh;
+  }
+
+  .game-wrap{
+    width:1280px;height:720px;flex:none;
+    position:relative;
+    padding:28px 40px;
+    border-radius:14px;
+    box-shadow:0 20px 60px rgba(0,0,0,.55);
+    background: radial-gradient(ellipse at 50% 8%, #ff5b3c 0%, #f22b2b 28%, #b81414 58%, #6e0808 100%);
+    display:flex;flex-direction:column;
+    transform-origin:center center;
+    overflow:hidden;
+  }
+
+  .top-bar{display:flex;align-items:center;justify-content:space-between;flex:none;}
+  .counter{
+    font-family:'Poppins';font-weight:700;font-size:14px;color:#3a2a12;
+    background:var(--slot-bg);border:2px solid var(--gold-dark);border-radius:20px;
+    padding:7px 16px;box-shadow:inset 0 1px 2px rgba(255,255,255,.6);
+  }
+  .reset-btn{
+    width:42px;height:42px;border-radius:50%;border:2px solid var(--gold-light);
+    background:linear-gradient(160deg,#2a2214,#0c0904);color:var(--cream);
+    font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 3px 8px rgba(0,0,0,.4);transition:transform .15s;
+  }
+  .reset-btn:hover{transform:rotate(-25deg) scale(1.08);}
+  .reset-btn:focus-visible, .tile:focus-visible{outline:3px solid #fff; outline-offset:2px;}
+
+  h1{
+    font-family:'Anton',sans-serif;text-align:center;letter-spacing:1px;
+    font-size:32px;margin:6px 0 4px;color:var(--cream);flex:none;
+    text-shadow:0 2px 0 var(--gold-dark), 0 4px 10px rgba(0,0,0,.4);
+  }
+  .subtitle{
+    text-align:center;font-size:15px;color:#3a1508;font-weight:600;margin:0 0 20px;
+    opacity:.85;flex:none;
+  }
+
+  .sentence{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+    margin:0 0 26px;flex:none;
+  }
+  .slot{
+    background:var(--slot-bg);
+    border:3px solid var(--gold-dark);
+    border-radius:14px;
+    min-height:46px;min-width:66px;
+    padding:6px 18px;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:16px;color:#3a2610;
+    box-shadow:inset 0 2px 4px rgba(255,255,255,.55), 0 3px 6px rgba(0,0,0,.3);
+    transition:background .3s, transform .3s;
+  }
+  .slot.empty{color:#8a7a56;font-weight:400;letter-spacing:2px;}
+  .slot.filled{
+    background:linear-gradient(160deg,#fff3b0,#e2c467);
+    transform:scale(1.05);
+  }
+
+  .board{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;}
+  .diamond-glow{
+    position:absolute;top:50%;left:50%;width:300px;height:300px;
+    transform:translate(-50%,-50%) rotate(45deg);
+    background:linear-gradient(135deg,var(--gold-light),#c9901f);
+    box-shadow:0 0 70px 14px rgba(255,220,120,.4);
+    opacity:.4;border-radius:24px;z-index:0;
+  }
+  .row{display:flex;gap:12px;margin-top:-10px;position:relative;z-index:1;}
+  .row:first-child{margin-top:0;}
+
+  .tile{
+    height:76px;border-radius:16px;
+    border:3px solid var(--gold-light);
+    background:linear-gradient(160deg,#232019,#0a0806);
+    color:var(--cream);font-family:'Anton',sans-serif;font-size:34px;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    cursor:pointer;padding:4px 8px;line-height:1.05;
+    box-shadow:inset 0 2px 3px rgba(255,255,255,.15), 0 4px 10px rgba(0,0,0,.5);
+    transition:transform .15s, box-shadow .15s, background .3s, color .3s, font-size .3s;
+  }
+  .tile.wide{width:200px;}
+  .tile.narrow{width:150px;}
+  .tile:not(:disabled):hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 16px rgba(0,0,0,.5);}
+  .tile:disabled{cursor:default;}
+
+  .tile.revealed-word{
+    background:linear-gradient(160deg,#4a3a15,#7a561a);
+    color:#fff3b0;font-family:'Poppins',sans-serif;font-weight:800;font-size:15px;
+  }
+  .tile.revealed-lose{
+    background:linear-gradient(160deg,#6b2323,#310e0e);
+    color:#ffd9d9;font-family:'Poppins',sans-serif;font-weight:700;font-size:28px;
+  }
+  .tile.revealed-bonus{
+    background:linear-gradient(160deg,#5a2a80,#2c0f3f);
+    color:#ecd9ff;font-family:'Poppins',sans-serif;font-weight:700;font-size:28px;
+  }
+
+  .flyer{
+    position:fixed;transform:translate(-50%,-50%);
+    font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;color:#fff3b0;
+    text-shadow:0 2px 6px rgba(0,0,0,.6);
+    z-index:9999;pointer-events:none;
+    transition:left .6s cubic-bezier(.4,0,.2,1), top .6s cubic-bezier(.4,0,.2,1), opacity .6s, transform .6s;
+    opacity:1;
+  }
+
+  .toast{
+    position:fixed;top:22px;left:50%;transform:translate(-50%,-20px);
+    background:#1a1610;color:var(--gold-light);padding:12px 26px;border-radius:12px;
+    font-weight:700;font-size:14px;box-shadow:0 8px 20px rgba(0,0,0,.45);
+    opacity:0;transition:opacity .3s, transform .3s;z-index:10000;pointer-events:none;
+    border:1px solid var(--gold-dark);
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0);}
+
+  .confetti-layer{position:fixed;inset:0;pointer-events:none;z-index:9998;overflow:hidden;}
+  .confetti-piece{position:absolute;top:-24px;opacity:.95;animation:confetti-fall linear forwards;}
+  @keyframes confetti-fall{to{transform:translateY(112vh) rotate(680deg);}}
+
+  .win-overlay{
+    position:fixed;inset:0;z-index:10001;display:flex;align-items:center;justify-content:center;
+    background:rgba(20,4,4,.55);backdrop-filter:blur(2px);
+    opacity:0;pointer-events:none;transition:opacity .4s;
+  }
+  .win-overlay.show{opacity:1;pointer-events:auto;}
+  .win-card{
+    background:linear-gradient(160deg,#fff3b0,#e2c467);
+    border:4px solid #8a5a1e;border-radius:22px;
+    padding:32px 28px;max-width:420px;text-align:center;
+    box-shadow:0 20px 50px rgba(0,0,0,.5);
+    transform:scale(.9);transition:transform .4s;
+  }
+  .win-overlay.show .win-card{transform:scale(1);}
+  .win-card h2{font-family:'Anton',sans-serif;font-size:26px;margin:0 0 12px;color:#3a2610;}
+  .win-card p{font-weight:600;font-size:15px;margin:0 0 20px;color:#3a2610;}
+  .win-card button{
+    font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;
+    background:#1a1610;color:var(--gold-light);border:none;border-radius:12px;
+    padding:12px 22px;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.3);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .flyer, .tile, .slot, .win-overlay, .win-card{transition-duration:.01ms !important;}
+    .confetti-piece{animation-duration:.01ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="game-wrap" id="gameWrap">
+  <div class="top-bar">
+    <div class="counter" id="counter">Encontradas: 0/7</div>
+    <button class="reset-btn" id="resetBtn" title="Reiniciar juego" aria-label="Reiniciar juego">↺</button>
+  </div>
+
+  <h1>¿Qué dice el mensaje?</h1>
+  <p class="subtitle">Elegí un número y descubrí la frase completa</p>
+
+  <div class="sentence" id="sentence"></div>
+
+  <div class="board" id="board">
+    <div class="diamond-glow"></div>
+  </div>
+</div>
+
+<div class="win-overlay" id="winOverlay">
+  <div class="win-card">
+    <h2>¡Lo lograste! 🎉</h2>
+    <p id="winPhrase"></p>
+    <button id="playAgainBtn">Jugar de nuevo</button>
+  </div>
+</div>
+
+<script>
+  const PHRASE = ["Hacer","lo correcto","incluso","cuando","nadie","está","mirando"];
+  const FULL_SENTENCE = "Hacer lo correcto incluso cuando nadie está mirando.";
+  const ROWS = [
+    {base:'wide',   nums:[1,2]},
+    {base:'narrow', nums:[3,4,5]},
+    {base:'narrow', nums:[6,7,8]},
+    {base:'narrow', nums:[9,10,11]},
+    {base:'wide',   nums:[12,13]}
+  ];
+
+  let deck = [];
+  let foundWords = 0;
+
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+  }
+
+  function buildDeck(){
+    const words = PHRASE.map((w,i)=>({type:'word', text:w, order:i}));
+    const fillers = [
+      {type:'lose'},{type:'lose'},{type:'lose'},
+      {type:'bonus'},{type:'bonus'},{type:'bonus'}
+    ];
+    return shuffle(words.concat(fillers));
+  }
+
+  function buildSentenceDOM(){
+    const wrap = document.getElementById('sentence');
+    wrap.innerHTML = '';
+    PHRASE.forEach((_,i)=>{
+      const slot = document.createElement('div');
+      slot.className = 'slot empty';
+      slot.id = 'slot-'+i;
+      slot.textContent = '···';
+      wrap.appendChild(slot);
+    });
+  }
+
+  function buildBoardDOM(){
+    const board = document.getElementById('board');
+    board.querySelectorAll('.row').forEach(r=>r.remove());
+    ROWS.forEach(rowDef=>{
+      const row = document.createElement('div');
+      row.className = 'row';
+      rowDef.nums.forEach(num=>{
+        const btn = document.createElement('button');
+        btn.className = 'tile ' + rowDef.base;
+        btn.dataset.base = rowDef.base;
+        btn.dataset.index = num - 1;
+        btn.textContent = num;
+        btn.addEventListener('click', onTileClick);
+        row.appendChild(btn);
+      });
+      board.appendChild(row);
+    });
+  }
+
+  function onTileClick(e){
+    const tile = e.currentTarget;
+    revealTile(parseInt(tile.dataset.index,10), tile);
+  }
+
+  function revealTile(idx, tileEl){
+    if(!tileEl || tileEl.disabled) return;
+    tileEl.disabled = true;
+    const item = deck[idx];
+    if(item.type === 'word'){
+      tileEl.classList.add('revealed-word');
+      tileEl.textContent = item.text;
+      flyWordToSlot(tileEl, item.text, item.order);
+    } else if(item.type === 'lose'){
+      tileEl.classList.add('revealed-lose');
+      tileEl.textContent = '😬';
+      showToast('Perdiste el turno');
+    } else if(item.type === 'bonus'){
+      tileEl.classList.add('revealed-bonus');
+      tileEl.textContent = '🎉';
+      showToast('¡Otra oportunidad! Seguís jugando');
+    }
+  }
+
+  function flyWordToSlot(tileEl, word, slotIndex){
+    const tileRect = tileEl.getBoundingClientRect();
+    const slotEl = document.getElementById('slot-'+slotIndex);
+
+    const flyer = document.createElement('div');
+    flyer.className = 'flyer';
+    flyer.textContent = word;
+    flyer.style.left = (tileRect.left + tileRect.width/2) + 'px';
+    flyer.style.top = (tileRect.top + tileRect.height/2) + 'px';
+    document.body.appendChild(flyer);
+
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        const slotRect = slotEl.getBoundingClientRect();
+        flyer.style.left = (slotRect.left + slotRect.width/2) + 'px';
+        flyer.style.top = (slotRect.top + slotRect.height/2) + 'px';
+        flyer.style.opacity = '0.15';
+        flyer.style.transform = 'translate(-50%,-50%) scale(0.6)';
+      });
+    });
+
+    setTimeout(()=>{
+      flyer.remove();
+      slotEl.textContent = word;
+      slotEl.classList.remove('empty');
+      slotEl.classList.add('filled');
+      foundWords++;
+      updateCounter();
+      if(foundWords === PHRASE.length){
+        setTimeout(celebrate, 300);
+      }
+    }, 620);
+  }
+
+  function updateCounter(){
+    document.getElementById('counter').textContent = `Encontradas: ${foundWords}/${PHRASE.length}`;
+  }
+
+  let toastTimer = null;
+  function showToast(msg){
+    let toast = document.getElementById('toast');
+    if(!toast){
+      toast = document.createElement('div');
+      toast.id = 'toast';
+      toast.className = 'toast';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>toast.classList.remove('show'), 1500);
+  }
+
+  function celebrate(){
+    launchConfetti();
+    document.getElementById('winPhrase').textContent = FULL_SENTENCE;
+    document.getElementById('winOverlay').classList.add('show');
+  }
+
+  function launchConfetti(){
+    const colors = ['#ffd66b','#f6a92c','#2ce6a0','#5a2a80','#ffffff','#f2e6c9'];
+    const layer = document.createElement('div');
+    layer.className = 'confetti-layer';
+    document.body.appendChild(layer);
+    const count = 130;
+    for(let i=0;i<count;i++){
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      const size = 6 + Math.random()*8;
+      const isCircle = Math.random() > 0.5;
+      piece.style.width = size + 'px';
+      piece.style.height = (isCircle ? size : size*1.6) + 'px';
+      piece.style.left = (Math.random()*100) + 'vw';
+      piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+      piece.style.borderRadius = isCircle ? '50%' : '2px';
+      piece.style.animationDuration = (2.2 + Math.random()*2.2) + 's';
+      piece.style.animationDelay = (Math.random()*0.6) + 's';
+      piece.style.transform = `rotate(${Math.random()*360}deg)`;
+      layer.appendChild(piece);
+    }
+    setTimeout(()=>layer.remove(), 5200);
+  }
+
+  function fitSlide(){
+    const margin = 40;
+    const scaleX = (window.innerWidth - margin) / 1280;
+    const scaleY = (window.innerHeight - margin) / 720;
+    const scale = Math.min(scaleX, scaleY);
+    document.getElementById('gameWrap').style.transform = `scale(${scale})`;
+  }
+  window.addEventListener('resize', fitSlide);
+
+  function initGame(){
+    deck = buildDeck();
+    foundWords = 0;
+    buildSentenceDOM();
+    buildBoardDOM();
+    updateCounter();
+    document.getElementById('winOverlay').classList.remove('show');
+  }
+
+  document.getElementById('resetBtn').addEventListener('click', initGame);
+  document.getElementById('playAgainBtn').addEventListener('click', initGame);
+
+  initGame();
+  fitSlide();
+</script>
+</body>
+</html>
