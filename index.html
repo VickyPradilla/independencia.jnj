@@ -59,10 +59,10 @@
     background:var(--slot-bg);
     border:3px solid var(--gold-dark);
     border-radius:16px;
-    min-height:56px;min-width:76px;
-    padding:10px 22px;
+    min-height:64px;min-width:86px;
+    padding:12px 26px;
     display:flex;align-items:center;justify-content:center;
-    font-weight:700;font-size:18px;color:#3a2610;
+    font-weight:700;font-size:20px;color:#3a2610;
     box-shadow:inset 0 2px 4px rgba(255,255,255,.55), 0 3px 6px rgba(0,0,0,.3);
     transition:background .3s, transform .35s, font-size .35s, padding .35s;
   }
@@ -74,7 +74,7 @@
   }
   .sentence.complete{gap:14px;}
   .sentence.complete .slot.filled{
-    font-size:28px;padding:12px 28px;
+    font-size:32px;padding:16px 32px;
     box-shadow:inset 0 2px 4px rgba(255,255,255,.55), 0 6px 14px rgba(0,0,0,.4);
   }
 
@@ -86,35 +86,33 @@
     box-shadow:0 0 70px 14px rgba(255,220,120,.4);
     opacity:.4;border-radius:24px;z-index:0;
   }
-  .row{display:flex;gap:16px;margin-top:16px;position:relative;z-index:1;}
+  .row{display:flex;gap:14px;margin-top:14px;position:relative;z-index:1;}
   .row:first-child{margin-top:0;}
 
   .tile{
-    height:76px;border-radius:16px;
+    height:62px;width:130px;border-radius:14px;
     border:3px solid var(--gold-light);
     background:linear-gradient(160deg,#232019,#0a0806);
-    color:var(--cream);font-family:'Anton',sans-serif;font-size:34px;
+    color:var(--cream);font-family:'Anton',sans-serif;font-size:28px;
     display:flex;align-items:center;justify-content:center;text-align:center;
     cursor:pointer;padding:4px 8px;line-height:1.05;
     box-shadow:inset 0 2px 3px rgba(255,255,255,.15), 0 4px 10px rgba(0,0,0,.5);
     transition:transform .15s, box-shadow .15s, background .3s, color .3s, font-size .3s;
   }
-  .tile.wide{width:200px;}
-  .tile.narrow{width:150px;}
   .tile:not(:disabled):hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 16px rgba(0,0,0,.5);}
   .tile:disabled{cursor:default;}
 
   .tile.revealed-word{
     background:linear-gradient(160deg,#4a3a15,#7a561a);
-    color:#fff3b0;font-family:'Poppins',sans-serif;font-weight:800;font-size:15px;
+    color:#fff3b0;font-family:'Poppins',sans-serif;font-weight:800;font-size:13px;
   }
   .tile.revealed-lose{
     background:linear-gradient(160deg,#6b2323,#310e0e);
-    color:#ffd9d9;font-family:'Poppins',sans-serif;font-weight:700;font-size:28px;
+    color:#ffd9d9;font-family:'Poppins',sans-serif;font-weight:700;font-size:24px;
   }
   .tile.revealed-bonus{
     background:linear-gradient(160deg,#5a2a80,#2c0f3f);
-    color:#ecd9ff;font-family:'Poppins',sans-serif;font-weight:700;font-size:28px;
+    color:#ecd9ff;font-family:'Poppins',sans-serif;font-weight:700;font-size:24px;
   }
 
   .flyer{
@@ -165,12 +163,80 @@
     .flyer, .tile, .slot, .win-overlay, .win-card{transition-duration:.01ms !important;}
     .confetti-piece{animation-duration:.01ms !important;}
   }
+
+  .start-screen{
+    position:absolute;inset:0;z-index:500;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;
+    background:radial-gradient(ellipse at 50% 20%, #ff5b3c 0%, #f22b2b 30%, #b81414 62%, #6e0808 100%);
+    border-radius:14px;text-align:center;padding:40px;
+  }
+  .start-screen.hidden{display:none;}
+  .start-screen h2{
+    font-family:'Anton',sans-serif;font-size:58px;color:var(--cream);margin:0;letter-spacing:1px;
+    text-shadow:0 2px 0 var(--gold-dark), 0 4px 10px rgba(0,0,0,.4);
+  }
+  .start-screen p{
+    font-family:'Poppins',sans-serif;font-weight:600;font-size:26px;color:#3a1508;
+    white-space:nowrap;margin:0;
+  }
+  .start-screen button{
+    font-family:'Poppins',sans-serif;font-weight:700;font-size:18px;
+    background:#1a1610;color:var(--gold-light);border:2px solid var(--gold-light);
+    border-radius:14px;padding:16px 40px;cursor:pointer;
+    box-shadow:0 6px 16px rgba(0,0,0,.4);transition:transform .15s;
+    margin-top:24px;
+  }
+  .start-screen button:hover{transform:scale(1.05);}
+
+  .question-overlay{
+    position:fixed;inset:0;z-index:10002;display:flex;align-items:center;justify-content:center;
+    background:rgba(20,4,4,.6);backdrop-filter:blur(2px);
+    opacity:0;pointer-events:none;transition:opacity .3s;
+  }
+  .question-overlay.show{opacity:1;pointer-events:auto;}
+  .question-card{
+    background:linear-gradient(160deg,#fff3b0,#e2c467);
+    border:4px solid #8a5a1e;border-radius:22px;
+    padding:32px 36px;max-width:640px;width:90%;
+    box-shadow:0 20px 50px rgba(0,0,0,.5);
+    transform:scale(.92);transition:transform .3s;
+  }
+  .question-overlay.show .question-card{transform:scale(1);}
+  .question-label{
+    font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1.5px;color:#8a5a1e;
+    margin-bottom:10px;text-transform:uppercase;
+  }
+  .question-card p{
+    font-family:'Poppins',sans-serif;line-height:1.5;color:#3a2610;text-align:left;
+  }
+  .q-stem{
+    font-weight:800;font-size:18px;white-space:pre-line;margin:0 0 20px;
+  }
+  .q-options{
+    font-weight:500;font-size:16px;white-space:pre-line;margin:0 0 26px;
+    opacity:.9;
+  }
+  .question-buttons{display:flex;gap:14px;justify-content:center;}
+  .question-buttons button{
+    font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;border:none;border-radius:12px;
+    padding:12px 28px;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.3);color:#fff;
+    transition:transform .15s;
+  }
+  .question-buttons button:hover{transform:translateY(-2px);}
+  .btn-correct{background:linear-gradient(160deg,#2c8a5f,#1c5f3f);}
+  .btn-incorrect{background:linear-gradient(160deg,#b23b3b,#7a1f1f);}
 </style>
 </head>
 <body>
 
 <div class="game-wrap" id="gameWrap">
-  <h1>Descifrá el mensaje de compliance</h1>
+  <div class="start-screen" id="startScreen">
+    <h2>¡Bienvenido equipo Vision!</h2>
+    <p>¿Están listos para poner sus conocimientos a prueba?</p>
+    <button id="startBtn">Comenzar</button>
+  </div>
+
+  <h1>Descifrá el mensaje</h1>
 
   <div class="sentence" id="sentence"></div>
 
@@ -178,7 +244,7 @@
     <div class="diamond-glow"></div>
   </div>
 
-  <div class="counter" id="counter">Encontradas: 0/7</div>
+  <div class="counter" id="counter">Encontradas: 0/8</div>
 </div>
 
 <div class="win-overlay" id="winOverlay">
@@ -189,16 +255,51 @@
   </div>
 </div>
 
+<div class="question-overlay" id="questionOverlay">
+  <div class="question-card">
+    <div class="question-label" id="questionLabel">Casilla 1</div>
+    <p id="questionStem" class="q-stem"></p>
+    <p id="questionOptions" class="q-options"></p>
+    <div class="question-buttons">
+      <button id="btnCorrecto" class="btn-correct">Correcto</button>
+      <button id="btnIncorrecto" class="btn-incorrect">Incorrecto</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  const PHRASE = ["Hacer","lo correcto","incluso","cuando","nadie","está","mirando"];
+  const PHRASE = ["Hacer","lo","correcto","incluso","cuando","nadie","está","mirando"];
   const FULL_SENTENCE = "Hacer lo correcto incluso cuando nadie está mirando.";
   const ROWS = [
-    {base:'wide',   nums:[1,2]},
+    {base:'narrow', nums:[1,2]},
     {base:'narrow', nums:[3,4,5]},
-    {base:'narrow', nums:[6,7,8]},
-    {base:'narrow', nums:[9,10,11]},
-    {base:'wide',   nums:[12,13]}
+    {base:'narrow', nums:[6,7,8,9]},
+    {base:'narrow', nums:[10,11,12]},
+    {base:'narrow', nums:[13,14]},
+    {base:'narrow', nums:[15]}
   ];
+
+  const QUESTIONS = [
+"¿Cuál de los siguientes descuentos presenta MENOR riesgo desde la perspectiva de Defensa de la Competencia?\nA. Descuento otorgado porque la óptica mantiene precios alineados con otras ópticas.\nB. Descuento otorgado por volumen de compra.\nC. Descuento otorgado porque un competidor se quejó de esa óptica.\nD. Descuento condicionado a que la óptica aumente sus precios.",
+"¿Verdadero o falso?\nSi una óptica vende lentes con un margen muy bajo o incluso a pérdida, J&J puede intervenir para obligarla a aumentar sus precios.",
+"¿Cuál de los siguientes criterios sería el más adecuado para determinar distintos plazos de pago entre clientes?\nA. El tamaño físico del local.\nB. La simpatía del cliente con el equipo comercial.\nC. La calificación de riesgo crediticio y antecedentes de pago.\nD. El precio al que revende los productos.",
+"¿Verdadero o falso?\nWhatsApp puede utilizarse para intercambiar información logística simple, como avisar que llegaré tarde a una reunión o compartir los datos de una teleconferencia.",
+"¿Cuál de estas acciones está permitida por la Política de Mensajería de J&J?\nA. Enviar por WhatsApp una propuesta comercial a un cliente.\nB. Compartir una presentación de ventas por WhatsApp.\nC. Discutir condiciones comerciales por WhatsApp.\nD. Avisar por WhatsApp que llegarás tarde a una reunión.",
+"El viernes a las 16:30 hs una óptica informa que un paciente encontró una posible anomalía en un producto. Todavía no hay fotografías ni análisis técnico disponible.\n¿Cuándo debería considerarse iniciado el plazo para el reporte?\nA. Cuando se reciban las fotografías.\nB. Cuando se complete la investigación técnica.\nC. Cuando se toma conocimiento de la posible situación.\nD. Cuando Quality confirme que existe un defecto.",
+"Un colaborador recibe información sobre un posible problema de producto, pero considera que probablemente se trate de un error de uso del paciente.\n¿Qué debería hacer?\nA. Reportar el caso dentro del plazo establecido, aunque existan dudas sobre la causa.\nB. Esperar a confirmar la causa antes de reportar.\nC. Solicitar primero una evaluación técnica.\nD. Esperar a recibir evidencia adicional.",
+"Durante una llamada, un cliente reporta un inconveniente que parece ser logístico. Sin embargo, menciona además que el producto podría presentar una falla.\n¿Cuál debería ser la prioridad?\nA. Resolver únicamente el aspecto logístico.\nB. Esperar el análisis del área responsable de entregas.\nC. Solicitar más información antes de iniciar cualquier acción.\nD. Gestionar el potencial reclamo de producto de acuerdo con el proceso establecido.",
+"¿Cuál de las siguientes situaciones representa el MAYOR riesgo de incumplimiento del proceso?\nA. Reportar un caso que luego se determina que no era un reclamo de producto.\nB. No reportar un caso porque todavía existen dudas sobre su clasificación.\nC. Consultar con Quality después de realizar el reporte inicial.\nD. Escalar rápidamente una posible situación relacionada con el producto.",
+"El lunes a las 10:00 hs una persona toma conocimiento de un posible reclamo de producto. El miércoles recibe información que confirma definitivamente el problema.\n¿Desde qué momento se considera el cumplimiento del plazo de reporte?\nA. Desde el momento en que se tomó conocimiento inicial del posible reclamo.\nB. Desde que se recibió toda la información necesaria.\nC. Desde el miércoles, cuando se confirmó el problema.\nD. Desde que Commercial Quality recibe el caso.",
+"En un evento educativo organizado por J&J, Marketing propone incluir a dos HCPs \"clave para el negocio\" como asistentes porque podrían adoptar más rápido una nueva tecnología.\n¿Cuál es la opción más alineada con compliance?\nA. Aceptar la propuesta si los HCPs son estratégicos para Vision.\nB. Permitir que Marketing seleccione asistentes, siempre que el evento sea educativo.\nC. Rechazar automáticamente toda sugerencia comercial.\nD. La función científica/no comercial puede considerar información de mercado, pero la selección final debe tomarse fuera de funciones comerciales y con criterios objetivos.",
+"En un congreso de terceros, J&J patrocina un stand con un área médica y un área comercial.\n¿Cuál es la conducta correcta?\nA. El personal comercial puede atender ambas áreas si conoce bien el producto.\nB. El área educacional debe estar claramente separada del área comercial, y el personal comercial no debe interactuar con HCPs en la sección de educación.\nC. Se permite mezclar áreas si el material está aprobado.\nD. ProfEd puede usar el stand comercial para discutir información off label si el HCP pregunta.",
+"¿Verdadero o falso?\nEn actividades científicas/no comerciales, está permitido medir ROI si el análisis se hace solo internamente.",
+"Un reporte de gastos incluye una comida con ECPs, pero no se adjunta comprobante ni lista de asistentes.\n¿Cuál es la conducta más alineada con compliance?\nA. Devolver el reporte solicitando comprobante y asistentes en Concur.\nB. Aprobar si el empleado confirma verbalmente que el gasto fue correcto.\nC. Aprobar si es que cuenta con comentario detallado del contexto.\nD. Aprobar si el manager confía en el empleado.",
+"¿Qué elementos debería revisar un aprobador antes de aprobar una comida con ECPs en Concur?\nA. Que el gasto esté directamente relacionado con una actividad legítima del negocio.\nB. Que el monto sea razonable, necesario y proporcional.\nC. Que exista documentación soporte suficiente.\nD. Que el empleado haya cargado el gasto dentro del plazo.\nE. Que la justificación sea clara y específica."
+  ];
+
+  let modalOpen = false;
+  let pendingIdx = null;
+  let pendingTile = null;
 
   let deck = [];
   let foundWords = 0;
@@ -214,7 +315,7 @@
   function buildDeck(){
     const words = PHRASE.map((w,i)=>({type:'word', text:w, order:i}));
     const fillers = [
-      {type:'lose'},{type:'lose'},{type:'lose'},
+      {type:'lose'},{type:'lose'},{type:'lose'},{type:'lose'},
       {type:'bonus'},{type:'bonus'},{type:'bonus'}
     ];
     return shuffle(words.concat(fillers));
@@ -253,8 +354,29 @@
   }
 
   function onTileClick(e){
+    if(modalOpen) return;
     const tile = e.currentTarget;
-    revealTile(parseInt(tile.dataset.index,10), tile);
+    if(tile.disabled) return;
+    openQuestion(parseInt(tile.dataset.index,10), tile);
+  }
+
+  function openQuestion(idx, tileEl){
+    modalOpen = true;
+    pendingIdx = idx;
+    pendingTile = tileEl;
+    document.getElementById('questionLabel').textContent = 'Casilla ' + (idx + 1);
+    const lines = QUESTIONS[idx].split('\n');
+    const optionRegex = /^[A-E]\.\s/;
+    const stemLines = lines.filter(l => !optionRegex.test(l.trim()));
+    const optionLines = lines.filter(l => optionRegex.test(l.trim()));
+    document.getElementById('questionStem').textContent = stemLines.join('\n');
+    document.getElementById('questionOptions').textContent = optionLines.join('\n');
+    document.getElementById('questionOverlay').classList.add('show');
+  }
+
+  function closeQuestion(){
+    document.getElementById('questionOverlay').classList.remove('show');
+    modalOpen = false;
   }
 
   function revealTile(idx, tileEl){
@@ -379,6 +501,20 @@
   }
 
   document.getElementById('playAgainBtn').addEventListener('click', initGame);
+
+  document.getElementById('btnCorrecto').addEventListener('click', ()=>{
+    const idx = pendingIdx, tileEl = pendingTile;
+    closeQuestion();
+    revealTile(idx, tileEl);
+  });
+
+  document.getElementById('btnIncorrecto').addEventListener('click', ()=>{
+    closeQuestion();
+  });
+
+  document.getElementById('startBtn').addEventListener('click', ()=>{
+    document.getElementById('startScreen').classList.add('hidden');
+  });
 
   initGame();
   fitSlide();
